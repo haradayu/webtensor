@@ -9,9 +9,13 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 
-def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_rate = 0, test_rate = 0, random_state = 0):
+def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_rate = 0, test_rate = 0, random_state = 0, gray_mode = False):
     if out_dir != "" and not os.path.isdir(out_dir):
         os.makedirs(out_dir)
+    if gray_mode == True:
+        gray_flag_cv2 = cv2.IMREAD_GRAYSCALE
+    else:
+        gray_flag_cv2 = cv2.IMREAD_COLOR
     #読み込む拡張子
     ext_list = [".jpg", ".jpeg", ".png"]
     # データを入れる配列
@@ -43,7 +47,7 @@ def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_r
             if os.path.splitext(img_path)[1] not in ext_list:
                 continue
             tmp_path.append(img_path)
-            img = cv2.imread(img_path)
+            img = cv2.imread(img_path, gray_flag_cv2)
             img = cv2.resize(img, size)
             # 一列にした後、0-1のfloat値にする
             tmp_image.append(img.flatten().astype(np.float32)/255.0)
@@ -103,4 +107,4 @@ def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_r
             f.write(img_path + "\n")
             
             
-# generate_pkl_from_dir("testing", "out.pkl", out_dir = "mnist" ,val_rate = 0.2, test_rate = 0.1)
+generate_pkl_from_dir("testing", "out.pkl", out_dir = "mnist" ,val_rate = 0.2, test_rate = 0.1, gray_mode = True)
