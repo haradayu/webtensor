@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 
-def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_rate = 0, test_rate = 0, random_state = 0, gray_mode = False):
+def generate_pkl_from_dir(path, output_path, out_dir = "",size = (299, 299), val_rate = 0, test_rate = 0, random_state = 0, gray_mode = False):
     if out_dir != "" and not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     if gray_mode == True:
@@ -85,9 +85,12 @@ def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_r
     val_label = np.asarray(val_label)
     test_image = np.asarray(test_image)
     test_label = np.asarray(test_label)
+    label_name = np.array(label_name)
     #pikle形式で保存
-    with open(os.path.join(out_dir,output_path), "wb") as f:
-        pickle.dump([train_image, train_label, val_image, val_label,test_image, test_label, label_name],f)
+    # with open(os.path.join(out_dir,output_path), "wb") as f:
+    #     pickle.dump([train_image, train_label, val_image, val_label,test_image, test_label, label_name],f)
+    #npz形式で保存
+    np.savez(os.path.join(out_dir, output_path), train_image, train_label, val_image, val_label,test_image, test_label, label_name)
     
     #訓練用，評価用，テスト用それぞれのファイル名をテキストに保存
     with open(os.path.join(out_dir, path + "_train.txt"), "w") as f:
@@ -107,4 +110,4 @@ def generate_pkl_from_dir(path, output_path, out_dir = "",size = (28, 28), val_r
             f.write(img_path + "\n")
             
             
-generate_pkl_from_dir("testing", "out.pkl", out_dir = "mnist" ,val_rate = 0.2, test_rate = 0.1, gray_mode = True)
+generate_pkl_from_dir("101_ObjectCategories", "out.npz", out_dir = "caltech101" ,val_rate = 0.2, test_rate = 0.1)
